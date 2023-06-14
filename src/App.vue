@@ -2,9 +2,9 @@
 <script setup>
 
 import { ref, watch, computed } from 'vue'
-import { model, model2 } from '../ai.js'
+import { model } from '../ai.js'
 import HighLight from './HighLight.vue'
-import { Dropzone } from "dropzone";
+// import { Dropzone } from "dropzone";
 // const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 
 let video = ref()
