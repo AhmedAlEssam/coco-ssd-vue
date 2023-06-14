@@ -2,15 +2,20 @@
 <script setup>
 
 import { ref, watch, computed } from 'vue'
-import { model } from '../ai.js'
+import { model, model2 } from '../ai.js'
 import HighLight from './HighLight.vue'
-let video = ref() 
+import { Dropzone } from "dropzone";
+// const dropzone = new Dropzone("div#myId", { url: "/file/post" });
+
+let video = ref()
 const objects = ref([])
 let mediastream;
 
 // const text = ref('Detect Using Webcam')
 const isDetecting = ref(false)
 const startDetect = () => {
+  objects.value=[]
+  img.src=""
   if (isDetecting.value) {
     if (mediastream) {
       const tracks = mediastream.getTracks()
@@ -33,7 +38,15 @@ const startDetect = () => {
   }
 }
 
- 
+const uploadImg = () => {
+  img.src = window.URL.createObjectURL(inp.files[0]);
+  img.onload = () => {
+
+    model.detect(img).then(predictions => {
+      objects.value = predictions; 
+    });
+  };
+};
 
 const text = computed(() => {
   if (isDetecting.value) {
@@ -50,6 +63,9 @@ const imgUrl = computed(() => {
     return "./src/assets/webcam-off.png"
   }
 })
+function cl(){
+  inp.click()
+}
 
 const predict = () => {
   model.detect(video.value).then(predictions => {
@@ -62,7 +78,6 @@ const predict = () => {
 
 </script>
 <template>
- 
   <div class="border-solid border-2 flex">
 
     <div class="w-1/2 h-screen flex justify-center items-center">
@@ -72,8 +87,10 @@ const predict = () => {
         <img :src="imgUrl" alt="" class=" ">
         <p class=" font-bold">{{ text }}</p>
       </div>
-      <div class="w-[30%] border-solid border-2 rounded relative cursor-pointer flex flex-col items-center justify-center"
-        @click="console.log('fff')">
+      <div class="w-[30%] border-solid border-2 rounded relative cursor-pointer flex flex-col items-center justify-center relative"
+        @click="cl()">
+        <!-- <div class="my-dropzone"></div> -->
+        <input id="inp" type='file' accept='image/*' capture='camera' @change="uploadImg" class=" absolute opacity-0" style="width: -webkit-fill-available;"/>
         <img src="./assets/images.png" alt="" class=" ">
         <p class=" font-bold">Upload image to detect</p>
         <div v-if="isDetecting" class=" absolute bg-black bg-opacity-30 w-full h-full z-10 top-0 left-0"
@@ -87,13 +104,13 @@ const predict = () => {
     <div class="w-1/2 h-screen border-solid border-2 flex flex-col items-center justify-center">
       <div class="inline-block border-2 border-solid border-red-600 rounded w-[600px] h-[600px] relative">
         <video @loadeddata="predict" ref="video"
-          class=" inline-block border-2 border-solid border-red-600 rounded w-[619px] h-[464px]"></video>
+          class=" inline-block border-2 border-solid border-red-600 rounded w-[600px] h-[600px]"></video>
         <div
-          class="inline-block border-2 border-solid border-green-600 rounded w-[600px] h-[600px] absolute top-0 left-0 bg-gray-400"
+          class="  border-2 border-solid border-green-600 rounded w-[600px] h-[600px] absolute top-0 left-0 bg-gray-400 flex flex-col justify-center items-center"
           :class="isDetecting ? 'hidden' : ''">
-          <img src="" alt="">
+          <div id="container" class=" relative w-fit h-fit"><img id="img" src="" alt=""><High-light v-if="!isDetecting" v-for="object in objects" :object="object"></High-light></div>
         </div>
-        <High-light v-for="object in objects" :object="object"></High-light>
+        <High-light v-if="isDetecting" v-for="object in objects" :object="object"></High-light>
       </div>
 
     </div>
