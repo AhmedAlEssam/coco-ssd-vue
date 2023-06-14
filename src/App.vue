@@ -8,6 +8,7 @@ import HighLight from './HighLight.vue'
 // const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 
 let video = ref()
+let hover = ref(false)
 const objects = ref([])
 let mediastream;
 
@@ -107,10 +108,10 @@ const predict = () => {
           class=" inline-block border-2 border-solid border-red-600 rounded w-[600px] h-[600px]"></video>
         <div
           class="  border-2 border-solid border-green-600 rounded w-[600px] h-[600px] absolute top-0 left-0 bg-gray-400 flex flex-col justify-center items-center"
-          :class="isDetecting ? 'hidden' : ''">
-          <div id="container" class=" relative w-fit h-fit"><img id="img" src="" alt=""><High-light v-if="!isDetecting" v-for="object in objects" :object="object"></High-light></div>
+          :class="isDetecting ? 'hidden' : ''" @mouseenter="hover=true" @mouseleave="hover = false">
+          <div id="container" class=" relative w-fit h-fit"><img id="img" src="" alt=""><High-light v-if="!isDetecting && !hover" v-for="object in objects" :object="object"></High-light></div>
         </div>
-        <High-light v-if="isDetecting" v-for="object in objects" :object="object"></High-light>
+        <High-light v-if="isDetecting && !hover" v-for="object in objects" :object="object"></High-light>
       </div>
 
     </div>
