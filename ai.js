@@ -1,8 +1,5 @@
 
-let model = await cocoSsd.load();
-// let model2 = await tf.loadGraphModel('https://tfhub.dev/tensorflow/tfjs-model/ssdlite_mobilenet_v2/1/default/1', {fromTFHub: true});
+let model = await  cocoSsd.load({modelUrl:'http://localhost:5173/models/coco-ssd/model.json' });
  
 export {model}
-
-// await model.save('downloads://my-model')
-
+ 
